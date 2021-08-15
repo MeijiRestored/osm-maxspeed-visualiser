@@ -90,19 +90,19 @@
           "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}",
           {
             attribution:
-              'Cartography © <a href="http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" target="_blank">ArcGIS</a><br>Overlay data OpenStreetMap Contributors, licensed under ODbL ',
+              'Cartography © <a href="http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" target="_blank">ArcGIS</a><br>Overlay data OpenStreetMap Contributors, licensed under ODbL.<br>Website source code on <a href="https://github.com/32Vache/osm-maxspeed-visualiser">GitHub</a>',
           }
         );
         map.addLayer(arcgis);
 
         layerMapnik = new OpenLayers.Layer.OSM.Mapnik("Mapnik", {
           attribution:
-            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography licensed as CC-BY-SA<br>Overlay data licensed under ODbL ',
+            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography licensed as CC-BY-SA<br>Overlay data licensed under ODbL.<br>Website source code on <a href="https://github.com/32Vache/osm-maxspeed-visualiser">GitHub</a>',
         });
         map.addLayer(layerMapnik);
         layerCycleMap = new OpenLayers.Layer.OSM.CycleMap("CycleMap", {
           attribution:
-            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography © Opencyclemap.org<br>Overlay data licensed under ODbL ',
+            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography © Opencyclemap.org<br>Overlay data licensed under ODbL.<br>Website source code on <a href="https://github.com/32Vache/osm-maxspeed-visualiser">GitHub</a>',
         });
         map.addLayer(layerCycleMap);
 
@@ -111,7 +111,7 @@
           "http://s.basemaps.cartocdn.com/light_all/${z}/${x}/${y}.png",
           {
             attribution:
-              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
+              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a><br>Website source code on <a href="https://github.com/32Vache/osm-maxspeed-visualiser">GitHub</a>',
           }
         );
         map.addLayer(positron);
@@ -121,7 +121,7 @@
           "https://api.mapbox.com/styles/v1/whatismoss/cklwiopfh5e2z17qksl9cach6/tiles/256/${z}/${x}/${y}?access_token=pk.eyJ1Ijoid2hhdGlzbW9zcyIsImEiOiJja3E5bmRxNmQwOG5lMnNxdGxuZjNzZmN2In0.qxu3gz1KX3QDze34c6lXLA",
           {
             attribution:
-              'Map data © <a href="https://mapbox.com/" target="_blank">Mapbox</a><br>Overlay data <a href="https://www.openstreetmap.org">OpenStreetMap</a> Contributors, licensed under ODbL ',
+              'Map data © <a href="https://mapbox.com/" target="_blank">Mapbox</a><br>Overlay data <a href="https://www.openstreetmap.org">OpenStreetMap</a> Contributors, licensed under ODbL.<br>Website source code on <a href="https://github.com/32Vache/osm-maxspeed-visualiser">GitHub</a>',
           }
         );
         map.addLayer(colorfulRd);
