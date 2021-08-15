@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <meta
+      http-equiv="content-type"
+      content="text/html; charset=utf-8"
+      lang="en"
+    />
+    <title>OSM Maxspeed visualisation</title>
+    <script
+      src="http://openlayers.org/api/OpenLayers.js"
+      type="text/javascript"
+    ></script>
+    <script
+      src="http://openstreetmap.org/openlayers/OpenStreetMap.js"
+      type="text/javascript"
+    ></script>
+    <script src="noordpass.js" type="text/javascript"></script>
+    <script src="layerdef.js" type="text/javascript"></script>
+    <script src="browser.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <!-- eigen stylesheet-->
+    <script type="text/javascript">
+      BrowserDetect.init();
+      var browser = "";
+      //alert(BrowserDetect.browser + BrowserDetect.version);
+      if (BrowserDetect.browser == "MSIE" && BrowserDetect.version == "10") {
+        browser = "ie10";
+      }
+      if (BrowserDetect.browser == "MSIE" && BrowserDetect.version == "9") {
+        browser = "ie9";
+      }
+      //proxy instelling voor ie9/8
+      var proxy = false;
+
+      if (proxy) {
+        var QURL = "http://mijndev.openstreetmap.nl/~peewee32/api/interpreter/";
+      } else {
+        var QURL = "https://overpass.kumi.systems/api/interpreter/"; //default
+      }
+
+      var lat = 50.63;
+      var lon = 3.09;
+      var zoom = 14;
+      var map;
+      var tabtype = { name: "highways" }; // the default map
+
+      // zoek naar een eventuele map variabele in de GET van de permalink
+      var permalink_true = window.location.search;
+      if (permalink_true.length > 0) {
+        q = permalink_true.split("&");
+        q = q[0].split("=");
+        if (q[1].length > 0) {
+          tabtype.name = q[1];
+        }
+      }
+      //  de openlayers functie
+      function init() {
+        var ls = new OpenLayers.Control.LayerSwitcher();
+        plink = new OpenLayers.Control.Permalink({
+          base: "?map=" + tabtype.name,
+        });
+        map = new OpenLayers.Map("map", {
+          controls: [
+            ls,
+            new OpenLayers.Control.Navigation(),
+            new OpenLayers.Control.PanZoomBar(),
+            plink,
+            new OpenLayers.Control.Attribution(),
+          ],
+          maxExtent: new OpenLayers.Bounds(
+            -20037508.34,
+            -20037508.34,
+            20037508.34,
+            20037508.34
+          ),
+          maxResolution: 156543.0399,
+          numZoomLevels: 19,
+          units: "m",
+          projection: new OpenLayers.Projection("EPSG:900913"),
+          displayProjection: new OpenLayers.Projection("EPSG:4326"),
+        });
+        ls.maximizeControl();
+
+        //	var BW = new OpenLayers.Layer.XYZ("Mapnik (B&W)","http://toolserver.org/tiles/bw-mapnik/${z}/${x}/${y}.png",{'attribution': '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Overlay data licensed under ODbL '});
+        //	map.addLayer(BW);
+
+        var arcgis = new OpenLayers.Layer.XYZ(
+          "ArcGIS World Topo",
+          "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}",
+          {
+            attribution:
+              'Cartography © <a href="http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer" target="_blank">ArcGIS</a><br>Overlay data OpenStreetMap Contributors, licensed under ODbL ',
+          }
+        );
+        map.addLayer(arcgis);
+
+        layerMapnik = new OpenLayers.Layer.OSM.Mapnik("Mapnik", {
+          attribution:
+            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography licensed as CC-BY-SA<br>Overlay data licensed under ODbL ',
+        });
+        map.addLayer(layerMapnik);
+        layerCycleMap = new OpenLayers.Layer.OSM.CycleMap("CycleMap", {
+          attribution:
+            '© <a href="http://www.openstreetmap.org/copyright/en" target="_blank">OpenStreetMap</a> Contributors<br>Cartography © Opencyclemap.org<br>Overlay data licensed under ODbL ',
+        });
+        map.addLayer(layerCycleMap);
+
+        var positron = new OpenLayers.Layer.XYZ(
+          "Positron (CartoDB)",
+          "http://s.basemaps.cartocdn.com/light_all/${z}/${x}/${y}.png",
+          {
+            attribution:
+              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
+          }
+        );
+        map.addLayer(positron);
+
+        var colorfulRd = new OpenLayers.Layer.XYZ(
+          "Colorful Roads",
+          "https://api.mapbox.com/styles/v1/whatismoss/cklwiopfh5e2z17qksl9cach6/tiles/256/${z}/${x}/${y}?access_token=pk.eyJ1Ijoid2hhdGlzbW9zcyIsImEiOiJja3E5bmRxNmQwOG5lMnNxdGxuZjNzZmN2In0.qxu3gz1KX3QDze34c6lXLA",
+          {
+            attribution:
+              'Map data © <a href="https://mapbox.com/" target="_blank">Mapbox</a><br>Overlay data <a href="https://www.openstreetmap.org">OpenStreetMap</a> Contributors, licensed under ODbL ',
+          }
+        );
+        map.addLayer(colorfulRd);
+
+        var lonLat = new OpenLayers.LonLat(lon, lat).transform(
+          new OpenLayers.Projection("EPSG:4326"),
+          new OpenLayers.Projection("EPSG:900913")
+        );
+
+        layerdef(tabtype.name);
+       
+
+        if (!map.getCenter()) {
+          var pos = new OpenLayers.LonLat(lon, lat);
+          map.setCenter(
+            pos.transform(map.displayProjection, map.projection),
+            zoom
+          );
+        }
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <div id="map" class="smallmap"></div>
+    <div id="titel" class="titel">
+      <table
+        width="100%"
+        border="0"
+        cellspacing="0"
+        cellpadding="5"
+        height="100%"
+      >
+        <tr>
+          <td colspan="4" class="kaartnaam" align="center">
+            Maxspeed visualisation
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="statusline" class="statusline"></div>
+  </body>
+</html>
